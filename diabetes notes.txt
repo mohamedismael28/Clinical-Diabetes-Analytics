@@ -1,0 +1,8 @@
+Data Exploration -- > Explore and find mistakes in Data.
+every ? represent nan should be replaced as it's may be a missing value 
+untested labs are  None. meaning that the test not performed
+encounter_id should be removed
+there's no need for patient number
+we can't consider patients without glu serum test or aic lab test a diabetic patient so rows with both none should be deleted
+we can get columns for insured & non insured patients as cash payment or no cash payment for readmission expectation
+
