@@ -5,4 +5,4 @@ encounter_id should be removed
 there's no need for patient number
 we can't consider patients without glu serum test or aic lab test a diabetic patient so rows with both none should be deleted
 we can get columns for insured & non insured patients as cash payment or no cash payment for readmission expectation
-
+we can get diabetic patients with complications using number_diagnosis
