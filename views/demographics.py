@@ -223,44 +223,4 @@ def render_demographics_view(df: pd.DataFrame):
             bottom_note="Clinical protocols should remain equitable and universally applied across all racial and ethnic groups."
         )
 
-    # --- ROW 4: Admission Route vs Length of Stay ---
-    c4_chart, c4_rev = st.columns([7, 5])
-    with c4_chart:
-        with st.container(border=True):
-            render_card_title(
-                title="Admission Route vs Hospital Stay Duration",
-                subtitle="Average hospitalization days by hospital admission route"
-            )
-
-            adm_los = df.groupby("admission_type_desc", as_index=False)["time_in_hospital"].mean()
-            adm_los["time_in_hospital"] = adm_los["time_in_hospital"].round(2)
-            adm_los = adm_los.sort_values("time_in_hospital", ascending=False).head(5)
-
-            fig_adm_los = px.bar(
-                adm_los,
-                x="admission_type_desc",
-                y="time_in_hospital",
-                text_auto=True,
-                color_discrete_sequence=["#2B6CB0"]
-            )
-            fig_adm_los.update_traces(
-                textposition="outside",
-                hovertemplate="<b>%{x}</b><br>Average Stay: %{y:.2f} Days<extra></extra>"
-            )
-            fig_adm_los.update_layout(xaxis_title="", yaxis_title="Average Inpatient Days")
-            apply_plotly_theme(fig_adm_los, height=320, show_legend=False)
-            st.plotly_chart(fig_adm_los, use_container_width=True)
-
-    with c4_rev:
-        render_key_review_card(
-            title="Admission Route Impact",
-            badge_text="STAY COMPARISON",
-            highlight_stat="4.50 Days",
-            stat_label="Emergency Average Inpatient Stay",
-            takeaways=[
-                ("Higher Emergency Acuity", "Patients admitted through the emergency room stay nearly half a day longer (4.50 days) than scheduled elective patients (4.04 days)."),
-                ("Urgent Clinic Transfers", "Patients arriving through urgent physician referrals stay an average of 4.41 days."),
-                ("Planned Procedures Are Shorter", "Elective admissions have shorter, more predictable stays, making post-discharge care easier to coordinate.")
-            ],
-            bottom_note="Hospital discharge teams should give extra attention to patients arriving via emergency admission."
-        )
+    
