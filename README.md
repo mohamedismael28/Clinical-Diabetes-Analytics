@@ -1,107 +1,177 @@
-# Clinical Diabetes Inpatient Analytics Dashboard
+# Clinical Diabetes Analytics Dashboard
 
-A healthcare data analysis and decision-support web application for the **"Diabetes 130-US Hospitals"** dataset (`cleaned_diabetic_data.csv`), analyzing **101,745 inpatient encounters** across 130 medical centers from 1999 to 2008.
+This project is a clinical analytics dashboard built for exploring inpatient diabetes outcomes using the Diabetes 130-US Hospitals dataset. It is designed to help healthcare analysts and stakeholders understand treatment patterns, hospital utilization, readmission risk, and care quality indicators from a large inpatient dataset.
 
-This project investigates inpatient diabetes care patterns, therapeutic changes, and hospital bounce-back determinants, building upon the clinical research published by **Strack et al. (2014)** (*"Impact of HbA1c Measurement on Hospital Readmission Rates: Analysis of 70,000 Clinical Database Patient Records"*).
+The application analyzes hospital encounters and highlights operational insights such as patient demographics, lab testing practices, medication regimens, and the clinical drivers of readmission risk. The analysis is packaged as a Streamlit dashboard that makes large healthcare datasets easier to interpret through interactive visual reporting.
 
----
+## Project Overview
 
-## 1. System Architecture & Features
+The dashboard focuses on the following questions:
 
-The dashboard is built with a cohesive medical design system adhering to healthcare reporting standards:
+- Which patient groups are most represented in the dataset?
+- Do demographic and admission characteristics influence readmission patterns?
+- How often are HbA1c and glucose tests performed?
+- Which medication patterns are associated with longer hospital stays or greater risk?
+- What combinations of prior admissions and clinical variables are linked to early readmission?
 
-- **Light Theme Enforced**: Explicitly configured in `.streamlit/config.toml` (`base = "light"`).
-- **Curated Medical Palette**:
-  - Primary Clinical Blue: `#1F6FB2`
-  - Dark Navy for Headings: `#0F2D59`
-  - Crisp Content Backgrounds: `#FFFFFF`
-  - Soft Card Shadows: `rgba(15, 45, 89, 0.04)`
-  - Status Indicators: `#10B981` (Normal/Low Risk), `#F59E0B` (Moderate Warning), `#DC2626` (Early Readmission Alert).
-- **Clean Typography**: Inter (body) and Poppins (headings) via Google Fonts.
-- **Side-by-Side Chart & Key Review Layout**: Every chart is paired alongside an executive "Key Review" card:
-  1. Standardized page header with clinical category tag and subtitle
-  2. Four top-line KPI cards with blue accent border and icons
-  3. Side-by-side layout (`[7, 5]` column ratio): Chart on the left with clean numbers (`text_auto=True`) and an executive "Key Review" panel on the right explaining the findings in plain, non-technical language.
-- **Interpretability First**: Strictly uses accessible charts (bar charts, horizontal bars, donut charts, line charts, histograms, heatmaps) without hard-to-read box plots or violin plots.
+This project supports clinical review and operational analysis using data from 130 hospitals and covers a large inpatient population from 1999 to 2008.
 
+## Key Features
 
----
+- Executive overview with summary KPIs and readmission trends
+- Demographics and admission analysis by age, gender, race, and care setting
+- Clinical lab and glycemic testing review
+- Medication regimen and treatment-change monitoring
+- Readmission risk driver analysis
+- Interactive dataset explorer for filtered cohort review
+- Clean, healthcare-oriented dashboard styling suitable for reporting
 
-## 2. Analytical Pages
+## Data Model and Schema
 
-| Page | Scope & Key Findings |
-| :--- | :--- |
-| **Executive Overview** | Population summary, 46.1% overall readmission rate, 11.2% early (<30d) readmissions, 4.40-day average length of stay, and circulatory diagnosis preponderance. |
-| **Demographics & Admission** | Age deciles (peak volume in 70–80 cohort), outcome parity across gender (53.8% female vs 46.2% male, identical ~11.1% early readmit rate), racial distribution, and emergency admission stay duration. |
-| **Glycemic & Lab Testing** | Evaluation of inpatient HbA1c testing (only 16.7% tested) vs early readmission risk (<10% readmission when tested vs 11.4% when untested), comorbidity escalation, and lab volume. |
-| **Medication Regimens** | Antidiabetic drug prescribing (77.0%), active dosage titrations (46.2%), polypharmacy escalation (up to 4 agents), and length-of-stay impact. |
-| **Readmission Risk Drivers** | Prior inpatient admissions as the strongest predictor (2.5x higher bounce-back rate for 2+ visits), 2D heatmap cross-tabulating prior ER and inpatient admissions (up to 34% readmission), and length of stay correlation. |
-| **Dataset Explorer** | Live sub-cohort filtering, search, numerical percentile statistics, and sample CSV export for audit and reproducibility. |
-
----
-
-## 3. Database Schema & Feature Pipeline
+The dataset is structured as a flat clinical encounter table with one row per inpatient encounter. The schema is conceptually organized around patient demographics, admission details, clinical measurements, treatment changes, and outcomes.
 
 ```mermaid
-classDiagram
-    class InpatientEncounter {
-        +string race
-        +string gender
-        +string age
-        +int admission_type_id
-        +string admission_type_desc
-        +int time_in_hospital
-        +string payer_code
-        +int num_lab_procedures
-        +int num_procedures
-        +int num_medications
-        +int number_outpatient
-        +int number_emergency
-        +int number_inpatient
-        +int number_diagnoses
-        +string max_glu_serum
-        +string A1Cresult
-        +string change
-        +string diabetesMed
-        +string readmitted
-        +string readmitted_label
-        +int number_diabetic_drugs
-        +int number_doses_changed
-        +string Diagnosis_Group
+erDiagram
+    PATIENT ||--o{ ENCOUNTER : has
+    ENCOUNTER ||--o{ CLINICAL_MEASUREMENT : contains
+    ENCOUNTER ||--o{ MEDICATION_RECORD : includes
+    ENCOUNTER ||--o{ READMISSION_OUTCOME : classifies
+
+    PATIENT {
+        string race
+        string gender
+        string age_group
+    }
+
+    ENCOUNTER {
+        int encounter_id
+        int admission_type_id
+        string admission_type_desc
+        int time_in_hospital
+        string payer_code
+        int num_lab_procedures
+        int num_procedures
+        int num_medications
+        int number_outpatient
+        int number_emergency
+        int number_inpatient
+        int number_diagnoses
+    }
+
+    CLINICAL_MEASUREMENT {
+        string max_glu_serum
+        string A1Cresult
+        string diagnosis_group
+        int primary_diagnosis_count
+    }
+
+    MEDICATION_RECORD {
+        string change
+        string diabetesMed
+        int number_diabetic_drugs
+        int number_doses_changed
+    }
+
+    READMISSION_OUTCOME {
+        string readmitted
+        string readmitted_label
+        bool is_early_readmitted
     }
 ```
 
-### Preprocessing & Data Hygiene
-- **Gender Handling**: Visualizations exploring gender filter out the 3 unclassified records (`Unknown/Invalid`), analyzing 101,742 valid demographic encounters.
-- **Diagnosis Grouping**: High-cardinality ICD-9 codes are mapped into 7 primary diagnostic categories: *Circulatory, Respiratory, Digestive, Diabetes, Injury, Genitourinary, and Other*.
-- **Drug Aggregation**: 23 individual generic drug columns are summarized into two engineered indicators: `number_diabetic_drugs` (total active agents) and `number_doses_changed` (dosage titrations).
-- **Caching**: Data loading is wrapped with `@st.cache_data` for instantaneous page transitions.
+### Core Dataset Fields
 
----
+The cleaned dataset contains the main clinical variables used throughout the dashboard:
 
-## 4. Setup and Execution
+| Category | Representative Fields |
+| --- | --- |
+| Patient Demographics | `race`, `gender`, `age` |
+| Admission Context | `admission_type_id`, `admission_type_desc`, `time_in_hospital`, `payer_code` |
+| Clinical Complexity | `number_diagnoses`, `num_lab_procedures`, `num_procedures`, `num_medications` |
+| Prior Utilization | `number_outpatient`, `number_emergency`, `number_inpatient` |
+| Lab and Glycemic Data | `max_glu_serum`, `A1Cresult` |
+| Medication Treatment | `change`, `diabetesMed`, `number_diabetic_drugs`, `number_doses_changed` |
+| Outcome | `readmitted`, `readmitted_label`, `is_early_readmitted` |
 
-### Environment Prerequisites
-Activate your Conda environment named **`external`**:
+### Data Processing Notes
 
-```bash
-conda activate external
+- Categorical diagnosis codes are grouped into clinically meaningful categories for reporting.
+- Medication variables are summarized into engineered indicators to simplify analysis.
+- Gender filtering excludes unclassified records to maintain valid comparisons.
+- Admission and readmission labels are converted into human-readable reporting values.
+
+## Project Structure
+
+```text
+Clinical Diabetes Analytics/
+├── app.py
+├── README.md
+├── cleaned_diabetic_data.csv
+├── requirements.txt
+├── assets/
+├── components/
+├── pages/
+├── views/
+├── .gitignore
+└── .streamlit/
 ```
 
-### Installed Dependencies
-The environment includes:
-- `streamlit==1.44.1`
-- `plotly==6.9.0`
-- `pandas==2.3.3`
-- `numpy==2.5.1`
-- `streamlit-option-menu==0.4.0` *(Installed for professional sidebar navigation)*
+## Setup and Run
 
-### Running the Application
+### 1. Create and activate your own virtual environment
 
-From the project root directory, launch the app using:
+On Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+If you are using Command Prompt:
+
+```cmd
+python -m venv .venv
+.venv\Scripts\activate.bat
+```
+
+### 2. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Launch the dashboard
+
+From the project root directory:
 
 ```bash
 streamlit run app.py
 ```
 
-The application will open in your default browser at `http://localhost:8501`.
+The application will open in the default browser at:
+
+```text
+http://localhost:8501
+```
+
+## Dashboard Pages
+
+- Executive Overview
+- Demographics & Admission
+- Glycemic & Lab Testing
+- Medication Regimens
+- Readmission Risk Drivers
+- Dataset Explorer
+
+## Technologies Used
+
+- Python
+- Streamlit
+- Pandas
+- NumPy
+- Plotly
+- Streamlit Option Menu
+
+## Notes
+
+This application is intended for analytical exploration and decision support rather than direct clinical diagnosis. It is best used to identify patterns, risk signals, and operational questions that can inform further investigation by clinicians and healthcare analysts.

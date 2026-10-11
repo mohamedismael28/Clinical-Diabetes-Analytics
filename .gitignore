@@ -1,0 +1,18 @@
+# Project files / deliverables
+Mid-Project (Criteria).pdf
+data analysis  stages . txt.txt
+
+
+# VS Code and local editor settings
+.vscode/
+.streamlit/
+
+# Python cache / virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Logs
+*.log
