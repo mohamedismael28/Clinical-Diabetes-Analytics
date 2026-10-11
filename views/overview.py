@@ -186,7 +186,7 @@ def render_overview_view(df: pd.DataFrame):
                 annotation_text=f"Mean: {avg_stay:.1f}d",
                 annotation_position="top right"
             )
-            fig_los.update_layout(xaxis_title="Days in Hospital (1–14)", yaxis_title="Number of Encounters")
+            fig_los.update_layout(xaxis_title="Days in Hospital (1–14)", yaxis_title="Number of Admissions")
             apply_plotly_theme(fig_los, height=320, show_legend=False)
             st.plotly_chart(fig_los, use_container_width=True)
 
@@ -205,6 +205,7 @@ def render_overview_view(df: pd.DataFrame):
         )
 
     # --- ROW 4: Admission Route Breakdown ---
+ 
     c4_chart, c4_rev = st.columns([7, 5])
     with c4_chart:
         with st.container(border=True):
@@ -212,16 +213,16 @@ def render_overview_view(df: pd.DataFrame):
                 title="Admission Route Breakdown",
                 subtitle="Patient entry point into the hospital system (Emergency, Elective, Urgent, Other)"
             )
-
-            adm_counts = df["admission_type_desc"].value_counts().head(5).reset_index()
-            adm_counts.columns = ["Admission Type", "Encounters"]
-
+            df['admission_type_id'] = df['admission_type_id'].replace({1: 'Emergency', 2: 'Urgent', 3: 'Elective', 4: 'Newborn', 7: 'Trauma Center', 5: 'Other', 6: 'Other', 8: 'Other'})
+            admission_type = df["admission_type_id"].value_counts().reset_index()
+            admission_type.columns = ["admission_type_id", "Encounters"]
+            admission_type = admission_type.sort_values(by="Encounters", ascending=False)
             fig_adm = px.bar(
-                adm_counts,
-                x="Admission Type",
+                admission_type,
+                x="admission_type_id",
                 y="Encounters",
                 text_auto=True,
-                color="Admission Type",
+                color="admission_type_id",
                 color_discrete_sequence=CLINICAL_PALETTE
             )
             fig_adm.update_traces(

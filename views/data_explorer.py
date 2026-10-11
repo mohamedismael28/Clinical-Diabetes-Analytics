@@ -125,7 +125,11 @@ def render_data_explorer_view(df: pd.DataFrame):
                 x="Gender",
                 y="Encounters",
                 text_auto=True,
-                color_discrete_sequence=[PRIMARY_BLUE]
+                color="Gender",
+                color_discrete_map={
+                    "Male": "#4B81D6",
+                    "Female": "#F44B67"
+                }
             )
             fig.update_layout(xaxis_title="Gender", yaxis_title="Encounters")
 

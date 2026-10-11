@@ -12,10 +12,10 @@ ADMISSION_TYPE_MAP = {
     2: "Urgent",
     3: "Elective",
     4: "Newborn",
-    5: "Not Available",
-    6: "NULL",
+    5: "Other",
+    6: "Other",
     7: "Trauma Center",
-    8: "Not Mapped"
+    8: "Other"
 }
 
 READMISSION_LABEL_MAP = {

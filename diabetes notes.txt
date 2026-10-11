@@ -6,3 +6,10 @@ there's no need for patient number
 we can't consider patients without glu serum test or aic lab test a diabetic patient so rows with both none should be deleted
 we can get columns for insured & non insured patients as cash payment or no cash payment for readmission expectation
 we can get diabetic patients with complications using number_diagnosis
+admission type id can be converted to 
+1 - emergency 
+2 - urgent 
+3- elective 
+4- newborn 
+7- trauma center 
+568-  other 
