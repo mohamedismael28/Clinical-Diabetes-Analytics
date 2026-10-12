@@ -2,6 +2,8 @@
 Mid-Project (Criteria).pdf
 data analysis  stages . txt.txt
 
+# Local environment settings
+.env
 
 # VS Code and local editor settings
 .vscode/
