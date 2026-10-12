@@ -89,6 +89,17 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
+    st.markdown("---")
+    st.markdown("""
+    <div style="padding: 10px 8px 4px 8px; border-radius: 8px; background: linear-gradient(180deg, #F7FAFD 0%, #EEF5FB 100%); border: 1px solid #DDEAF7;">
+        <div style="font-size: 0.72rem; color: #5A6A80; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 6px;">Project Credit</div>
+        <div style="font-size: 0.82rem; color: #0F2D59; font-weight: 600; margin-bottom: 4px;">Developed by Dr. Mohamed Ismael</div>
+        <div style="font-size: 0.75rem; color: #1F6FB2;">
+            <a href="https://www.linkedin.com/in/mohamedismael22/" target="_blank" style="text-decoration: none; color: #1F6FB2; font-weight: 600;">LinkedIn Profile</a>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 # 4. Route to Selected Page View
 if selected_page == "Executive Overview":
     render_overview_view(df)

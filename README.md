@@ -1,5 +1,11 @@
 # Clinical Diabetes Analytics Dashboard
 
+## Project Credit
+
+This project was developed by Dr. Mohamed Ismael.
+
+LinkedIn: https://www.linkedin.com/in/mohamedismael22/
+
 This project is a clinical analytics dashboard built for exploring inpatient diabetes outcomes using the Diabetes 130-US Hospitals dataset. It is designed to help healthcare analysts and stakeholders understand treatment patterns, hospital utilization, readmission risk, and care quality indicators from a large inpatient dataset.
 
 The application analyzes hospital encounters and highlights operational insights such as patient demographics, lab testing practices, medication regimens, and the clinical drivers of readmission risk. The analysis is packaged as a Streamlit dashboard that makes large healthcare datasets easier to interpret through interactive visual reporting.
